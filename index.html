@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sinh Viên</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --text-color: #333;
+            --bg-color: #f4f7f6;
+            --white: #ffffff;
+            --danger: #ff4b2b;
+            --warning: #ffb142;
+        }
+
+        /* 1. CÀI ĐẶT CHUNG */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #e2ebf0 100%);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Container chính dạng thẻ */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 2. FORM NHẬP LIỆU */
+        .form-container {
+            margin-bottom: 40px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Chia 2 cột */
+            gap: 20px;
+        }
+
+        /* Gom nhóm ô nhập liệu để full chiều rộng trên mobile */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ô input full chiều rộng nếu cần */
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input {
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+
+        /* Nút bấm */
+        .btn-group {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #submitBtn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            flex: 1;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+        }
+
+        #submitBtn:hover {
+            opacity: 0.9;
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4);
+        }
+
+        #cancelBtn {
+            background: #ffeaa7;
+            color: #d35400;
+        }
+
+        /* 3. BẢNG HIỂN THỊ */
+        h3 {
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            min-width: 600px;
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Nút hành động trong bảng */
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .edit-btn {
+            background: var(--warning);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(255, 177, 66, 0.3);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            box-shadow: 0 2px 10px rgba(255, 75, 43, 0.3);
+        }
+
+        /* Responsive cho Mobile */
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr; /* Về 1 cột trên mobile */
+            }
+            .main-container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h2><i class="fas fa-user-graduate"></i> Quản Lý Sinh Viên</h2>
+
+        <div class="form-container">
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="id">Mã SV</label>
+                    <input type="text" id="id" required placeholder="Ví dụ: SV001">
+                </div>
+                <div class="form-group">
+                    <label for="name">Họ và Tên</label>
+                    <input type="text" id="name" required placeholder="Nguyễn Văn A">
+                </div>
+                <div class="form-group">
+                    <label for="dob">Ngày sinh</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="form-group">
+                    <label for="class">Lớp</label>
+                    <input type="text" id="class" required placeholder="CNTT-K15">
+                </div>
+                <div class="form-group full-width">
+                    <label for="gpa">Điểm GPA (0 - 4.0)</label>
+                    <input type="number" id="gpa" step="0.1" min="0" max="4" required placeholder="Nhập điểm...">
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" id="submitBtn"><i class="fas fa-plus-circle"></i> Thêm Sinh Viên</button>
+                    <button type="button" id="cancelBtn" style="display:none;" onclick="resetForm()"><i class="fas fa-times"></i> Hủy</button>
+                </div>
+            </form>
+        </div>
+
+        <h3>Danh Sách Sinh Viên</h3>
+        <div class="table-responsive">
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>Mã SV</th>
+                        <th>Họ Tên</th>
+                        <th>Ngày Sinh</th>
+                        <th>Lớp</th>
+                        <th>GPA</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 1. ĐỊNH NGHĨA CLASS SINH VIÊN (OOP)
+        class Student {
+            constructor(id, name, dob, className, gpa) {
+                this.id = id;
+                this.name = name;
+                this.dob = dob;
+                this.className = className;
+                this.gpa = gpa;
+            }
+
+            updateInfo(name, dob, className, gpa) {
+                this.name = name;
+                this.dob = dob;
+                this.className = className;
+                this.gpa = gpa;
+            }
+        }
+
+        // 2. QUẢN LÝ DỮ LIỆU
+        let studentList = [];
+        let isEditing = false; 
+
+        // 3. CÁC HÀM XỬ LÝ (LOGIC)
+        function renderTable() {
+            const tbody = document.querySelector('#studentTable tbody');
+            tbody.innerHTML = ''; 
+
+            if(studentList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888;">Chưa có dữ liệu sinh viên</td></tr>';
+                return;
+            }
+
+            studentList.forEach((student) => {
+                const row = `
+                    <tr>
+                        <td style="font-weight:bold; color:var(--primary-color)">${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.dob}</td>
+                        <td><span style="background:#eef2ff; padding: 4px 8px; border-radius:4px; color:var(--secondary-color); font-size:12px; font-weight:600">${student.className}</span></td>
+                        <td style="font-weight:bold;">${student.gpa}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="startEdit('${student.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn delete-btn" onclick="deleteStudent('${student.id}')"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        document.getElementById('studentForm').addEventListener('submit', function (e) {
+            e.preventDefault(); 
+
+            const id = document.getElementById('id').value;
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            const className = document.getElementById('class').value;
+            const gpa = document.getElementById('gpa').value;
+
+            if (isEditing) {
+                const student = studentList.find(s => s.id === id);
+                if (student) {
+                    student.updateInfo(name, dob, className, gpa);
+                    // Thông báo đẹp hơn (tùy chọn, ở đây dùng alert mặc định cho đơn giản)
+                    alert("Cập nhật thành công!");
+                }
+            } else {
+                if (studentList.some(s => s.id === id)) {
+                    alert("Mã sinh viên đã tồn tại!");
+                    return;
+                }
+                const newStudent = new Student(id, name, dob, className, gpa);
+                studentList.push(newStudent);
+            }
+
+            renderTable();
+            resetForm();
+        });
+
+        function startEdit(id) {
+            const student = studentList.find(s => s.id === id);
+            if (!student) return;
+
+            document.getElementById('id').value = student.id;
+            document.getElementById('id').disabled = true; 
+            document.getElementById('name').value = student.name;
+            document.getElementById('dob').value = student.dob;
+            document.getElementById('class').value = student.className;
+            document.getElementById('gpa').value = student.gpa;
+
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-check"></i> Cập Nhật';
+            document.getElementById('cancelBtn').style.display = "flex"; // Dùng flex để căn giữa icon
+            isEditing = true;
+            
+            // Cuộn lên đầu trang để người dùng thấy form
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteStudent(id) {
+            if (confirm("Bạn chắc chắn muốn xóa sinh viên này?")) {
+                studentList = studentList.filter(s => s.id !== id);
+                renderTable();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('studentForm').reset();
+            document.getElementById('id').disabled = false;
+            document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus-circle"></i> Thêm Sinh Viên';
+            document.getElementById('cancelBtn').style.display = "none";
+            isEditing = false;
+        }
+
+        // Gọi render lần đầu
+        renderTable();
+    </script>
+</body>
+</html>
