@@ -153,6 +153,13 @@
             background: white;
             min-width: 600px;
         }
+        
+        table td:last-child {
+            display: flex;       /* Turns the cell into a Flex container */
+            gap: 10px;           /* Creates exact space between buttons */
+            white-space: nowrap;
+            border-bottom: 1px solid #eee; /* Ensures border looks right */
+        }
 
         th {
             background: var(--primary-color);
